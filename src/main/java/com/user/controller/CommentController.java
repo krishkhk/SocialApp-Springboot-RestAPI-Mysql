@@ -107,6 +107,8 @@ public class CommentController {
 	
 	
 	//Delete Comments
+	
+	//If You want to performe Comments Delete
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteId(@PathVariable("id") Long id){
