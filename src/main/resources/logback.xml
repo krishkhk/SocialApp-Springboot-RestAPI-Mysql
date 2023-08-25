@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration status="WARN" monitorInterval="30">
+	<!-- Logging Properties. Any property to be used further shoudl be mentioned 
+		here -->
+	<Properties>
+		<property name="LOG_DIR" value="/var/tmp/mylog" />
+	</Properties>
+
+	<!-- Different Appenders used in Application -->
+	<Appenders>
+		<!-- Console Appender -->
+		<Console name="ConsoleLogger" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+		</Console>
+
+		<!-- Rolling File Appender -->
+		<!-- <RollingFile name="FileLogger" fileName="${LOG_DIR}/cbis.log" filePattern="${LOG_DIR}/cbis.%d{yyyy-MM-dd-HH}.log.gz" 
+			ignoreExceptions="false"> <PatternLayout> <Pattern>%d [%t] %-5p %c - %m%n</Pattern> 
+			</PatternLayout> <Policies> <TimeBasedTriggeringPolicy interval="1" modulate="true" 
+			/> </Policies> </RollingFile> -->
+
+		<RollingRandomAccessFile name="FileLogger"
+			fileName="${LOG_DIR}/mylog.log" filePattern="${LOG_DIR}/mylog.%d{yyyy-MM-dd-HH}.log.gz">
+			<PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+			</Policies>
+		</RollingRandomAccessFile>
+	</Appenders>
+</configuration>
+
