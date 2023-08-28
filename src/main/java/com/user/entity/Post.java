@@ -31,10 +31,10 @@ public class Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name="title")
+	@Column(name = "title")
 	private String title;
 
-	@Column(name="content")
+	@Column(name = "content")
 	private String Content;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -45,7 +45,6 @@ public class Post {
 	@JoinColumn(name = "user_id")
 	private User author;
 
-	
 	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	@JsonBackReference
 	private List<Comment> comments;
@@ -63,17 +62,16 @@ public class Post {
 		this.author = author;
 		this.comments = comments;
 	}
-	
-	  @PrePersist
-	    public void prePersist() {
-		  ZoneId zoneId = ZoneId.systemDefault();
-	        LocalDateTime localDateTime = LocalDateTime.now(zoneId);
-	        
-	        ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
-	        this.postedAt = Date.from(zonedDateTime.toInstant());
 
-	  }
+	@PrePersist
+	public void prePersist() {
+		ZoneId zoneId = ZoneId.systemDefault();
+		LocalDateTime localDateTime = LocalDateTime.now(zoneId);
 
+		ZonedDateTime zonedDateTime = localDateTime.atZone(zoneId);
+		this.postedAt = Date.from(zonedDateTime.toInstant());
+
+	}
 
 	public Long getId() {
 		return id;

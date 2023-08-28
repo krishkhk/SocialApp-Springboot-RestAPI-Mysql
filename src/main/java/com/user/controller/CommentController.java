@@ -32,54 +32,56 @@ import com.user.view.Views;
 @RequestMapping("/comments")
 public class CommentController {
 
-	
 	private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CommentController.class);
-	
+
 	@Autowired
 	UserRpo userRepo;
-	
+
 	@Autowired
 	PostRepo postRepo;
-	
+
 	@Autowired
 	CommentRepo commentRepo;
-	
+
 	/*
 	 * @GetMapping("/list") public List<Comment> getAllComment(){
 	 * logger.info("Listed all comments "); return commentRepo.findAll(); }
 	 */
-	
+
 	@GetMapping("/list")
-    public List<Comment> getAllComment() {
-        List<Comment> comments = commentRepo.findAll();
+	public List<Comment> getAllComment() {
+		logger.info("Received a GET request for Fetching All Comments ");
+		List<Comment> comments = commentRepo.findAll();
 
-        for (Comment comment : comments) {
-            comment.getAuthor(); // Fetch the author for each comment
-            comment.getPost();   // Fetch the post for each comment
-        }
+		for (Comment comment : comments) {
+			comment.getAuthor(); // Fetch the author for each comment
+			comment.getPost(); // Fetch the post for each comment
+		}
 
-        return comments;
-    }
+		return comments;
+	}
 
-	
-	//Find comment by Post id
-	 @GetMapping("/commentsByPost/{id}")
-	    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable("id") Long id) {
-	        try {
-	            Post post = postRepo.findById(id)
-	                    .orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + id));
-	            
-	            List<Comment> comments = commentRepo.findByPost(post);
-	            return ResponseEntity.ok(comments);
-	        } catch (ResourceNotFoundException ex) {
-	            return ResponseEntity.notFound().build();
-	        }
-	    }
-	
-	
+	// Find comment by Post id
+	@GetMapping("/commentsByPost/{id}")
+	public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable("id") Long id) {
+		logger.info("Received a GET request for Fetching Post  " +id+ "  Id comments");
+		try {
+			Post post = postRepo.findById(id)
+					.orElseThrow(() -> new ResourceNotFoundException("Post not found with ID: " + id));
+
+			List<Comment> comments = commentRepo.findByPost(post);
+			logger.info("successfully Fetched with Post ID Comments: {}"  +post.getId());
+			return ResponseEntity.ok(comments);
+		} catch (ResourceNotFoundException ex) {
+			logger.error("Error while fetching Post Comment Id not Found " +ex.getMessage());
+			return ResponseEntity.notFound().build();
+		}
+	}
+
 	@PostMapping("/postComment")
 	public ResponseEntity<Comment> postComment(@RequestBody Comment comments) {
 
+		logger.info("Received a POST request for creating a New Comment.");
 		try {
 			User author = userRepo.findById(comments.getAuthor().getId())
 					.orElseThrow(() -> new ResourceNotFoundException("User Not Found !"));
@@ -91,35 +93,39 @@ public class CommentController {
 			comment.setText(comments.getText());
 			comment.setAuthor(author);
 			comment.setPost(post);
-			
-			//comment.setCommentedAt(new java.util.Date());
+
+			// comment.setCommentedAt(new java.util.Date());
 
 			Comment savedComment = commentRepo.save(comment);
 			
+			logger.info("Received a PUT request for Succesfully created the comment with the Id ." +savedComment.getId());
 
 			return new ResponseEntity<Comment>(savedComment, HttpStatus.CREATED);
 		} catch (ResourceNotFoundException ex) {
+			logger.error("Error while creating Comment: {}", ex.getMessage());
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
+			logger.error("Error while creating Comment Internal Error: {}", e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
-	//Delete Comments
-	
-	//If You want to performe Comments Delete
+
+	// Delete Comments
+
+	// If You want to performe Comments Delete
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteId(@PathVariable("id") Long id){
-		Optional<Comment> deleteId=commentRepo.findById(id);
-		if(deleteId.isPresent()) {
+	public ResponseEntity<String> deleteId(@PathVariable("id") Long id) {
+		Optional<Comment> deleteId = commentRepo.findById(id);
+		if (deleteId.isPresent()) {
 			commentRepo.deleteById(id);
-			return ResponseEntity.ok("Deleted Successfully !");
-		}else {
+			logger.info("Successfully Deleted User");
+			return ResponseEntity.ok("Deleted Successfully ! with the Id " +deleteId.get().getId());
+		} else {
+			logger.info("Deleting the User Id not found.");
 			throw new ResourceNotFoundException("Id not Found !");
 		}
-		
+
 	}
-	
+
 }

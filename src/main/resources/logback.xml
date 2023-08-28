@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
 
-<configuration status="WARN" monitorInterval="30">
-	<!-- Logging Properties. Any property to be used further shoudl be mentioned 
-		here -->
-	<Properties>
-		<property name="LOG_DIR" value="/var/tmp/mylog" />
-	</Properties>
+    <property name="LOG_PATH" value="D:/Loggers" />
 
-	<!-- Different Appenders used in Application -->
-	<Appenders>
-		<!-- Console Appender -->
-		<Console name="ConsoleLogger" target="SYSTEM_OUT">
-			<PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
-		</Console>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-		<!-- Rolling File Appender -->
-		<!-- <RollingFile name="FileLogger" fileName="${LOG_DIR}/cbis.log" filePattern="${LOG_DIR}/cbis.%d{yyyy-MM-dd-HH}.log.gz" 
-			ignoreExceptions="false"> <PatternLayout> <Pattern>%d [%t] %-5p %c - %m%n</Pattern> 
-			</PatternLayout> <Policies> <TimeBasedTriggeringPolicy interval="1" modulate="true" 
-			/> </Policies> </RollingFile> -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_PATH}/application.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
 
-		<RollingRandomAccessFile name="FileLogger"
-			fileName="${LOG_DIR}/mylog.log" filePattern="${LOG_DIR}/mylog.%d{yyyy-MM-dd-HH}.log.gz">
-			<PatternLayout pattern="%d [%t] %-5p %c - %m%n" />
-			<Policies>
-				<TimeBasedTriggeringPolicy interval="1"
-					modulate="true" />
-			</Policies>
-		</RollingRandomAccessFile>
-	</Appenders>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
 </configuration>
-

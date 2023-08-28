@@ -26,16 +26,14 @@ import jakarta.persistence.TemporalType;
 @Entity
 @Table(name = "Comment")
 public class Comment {
-	
 
 	@jakarta.persistence.Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name="text")
+	@Column(name = "text")
 	private String text;
 
-	
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreatedDate
 	private Date commentedAt;
@@ -46,7 +44,7 @@ public class Comment {
 
 	@ManyToOne
 	@JoinColumn(name = "post_id")
-	//@JsonManagedReference // Add this annotation to manage the forward reference
+	// @JsonManagedReference // Add this annotation to manage the forward reference
 	@JsonBackReference
 	private Post post;
 
@@ -62,11 +60,11 @@ public class Comment {
 		this.author = author;
 		this.post = post;
 	}
-	
-	  @PrePersist
-	    public void prePersist() {
-	        this.commentedAt = new Date(); // Set current date and time before persisting
-	    }
+
+	@PrePersist
+	public void prePersist() {
+		this.commentedAt = new Date(); // Set current date and time before persisting
+	}
 
 	public Long getId() {
 		return id;
@@ -107,7 +105,5 @@ public class Comment {
 	public void setPost(Post post) {
 		this.post = post;
 	}
-
-
 
 }
