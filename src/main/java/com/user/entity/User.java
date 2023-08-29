@@ -1,6 +1,11 @@
 package com.user.entity;
 
+
+
+import org.springframework.security.crypto.bcrypt.BCrypt;
+
 import jakarta.persistence.Column;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +22,9 @@ public class User {
 
 	@Column(name="userName")
 	private String userName;
+	
+	@Column(name="password")
+	private String password;
 
 	@Column(name="Email")
 	private String Email;
@@ -33,6 +41,23 @@ public class User {
 	public User() {
 		
 	}
+	
+	
+	
+	public User(String password) {
+		
+	//	this.password = password;
+		this.password = hashPassword(password);
+	}
+
+
+
+	
+	  private String hashPassword(String plainPassword) { return
+	  BCrypt.hashpw(plainPassword, BCrypt.gensalt()); }
+	 
+
+	
 
 	public User(Long id, String userName, String email, String contactNumber, String dateOfBirth, String address) {
 		super();
@@ -92,6 +117,19 @@ public class User {
 		this.address = address;
 	}	
 	
+	
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+
+
+
 	
 	
 	

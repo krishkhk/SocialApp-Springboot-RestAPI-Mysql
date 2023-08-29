@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -30,7 +31,14 @@ public class UserController {
 
 	@Autowired
 	UserRpo userRepo;
-
+	
+	
+	private String hashPassword(String plainPassword) {
+		return BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+	}
+	
+	
+	 
 	@GetMapping("list")
 	public List<User> getUsers() {
 		logger.info("Received a GET request for Fetching All Users Details");
@@ -56,6 +64,7 @@ public class UserController {
 	@PostMapping("/create")
 	public User createUser(@RequestBody User user) {
 		logger.info("Received a POST request for creating a New User.");
+		user.setPassword(hashPassword(user.getPassword()));
 
 		return userRepo.save(user);
 	}
@@ -74,6 +83,8 @@ public class UserController {
 			existingUser.setContactNumber(user.getContactNumber());
 			existingUser.setDateOfBirth(user.getDateOfBirth());
 			existingUser.setAddress(user.getAddress());
+			//existingUser.setPassword(user.getPassword());
+			existingUser.setPassword(hashPassword(user.getPassword()));
 
 			User savedUser = userRepo.save(existingUser);
 			logger.info("Successfully Updated the User Details Given Id ." +savedUser.getId());
@@ -103,6 +114,7 @@ public class UserController {
 	
 	//using PATCH method only required fields should be Updated //field that to be updated
 	
+
 	@PatchMapping("/updateRequired/{id}")
 	public ResponseEntity<User> partialUpdateUser(@PathVariable("id") Long id,@RequestBody Map<String,Object> user){
 		
@@ -131,6 +143,19 @@ public class UserController {
 			if (user.containsKey("address")) {
 			    existingUser.setAddress((String) user.get("address"));
 			}
+			
+			if (user.containsKey("password")) {
+				existingUser.setPassword((String) user.get("password"));
+			}
+			
+			
+			if (user.containsKey("password")) {
+				String newPassword = (String) user.get("password");
+				if (newPassword != null && !newPassword.isEmpty()) {
+					existingUser.setPassword(hashPassword(newPassword));
+				}
+			}
+			
 			
 			logger.info("Successfully Updated The User Details." +existingUser.getId());
 
